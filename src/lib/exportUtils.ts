@@ -1,6 +1,8 @@
 import { saveAs } from 'file-saver';
 import TurndownService from 'turndown';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel } from 'docx';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 export const exportToHTML = (content: string, filename: string = 'document.html') => {
   const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
@@ -22,8 +24,89 @@ export const exportToMarkdown = (content: string, filename: string = 'document.m
   saveAs(blob, filename);
 };
 
-export const exportToPDF = () => {
-  window.print();
+export const exportToPDF = async (content: string, filename: string = 'document.pdf') => {
+  // Create a temporary container for rendering
+  const container = document.createElement('div');
+  container.style.position = 'absolute';
+  container.style.left = '-9999px';
+  container.style.top = '0';
+  container.style.width = '210mm'; // A4 width
+  container.style.padding = '20mm';
+  container.style.backgroundColor = '#ffffff';
+  container.style.color = '#000000';
+  container.style.fontFamily = 'Arial, sans-serif';
+  container.style.fontSize = '12pt';
+  container.style.lineHeight = '1.6';
+  
+  // Apply content with proper styling
+  container.innerHTML = `
+    <div style="max-width: 100%; word-wrap: break-word;">
+      ${content}
+    </div>
+  `;
+  
+  // Apply styles to make it look good in PDF
+  const style = document.createElement('style');
+  style.textContent = `
+    h1, h2, h3, h4, h5, h6 { color: #000; margin-top: 1em; margin-bottom: 0.5em; font-weight: bold; }
+    h1 { font-size: 24pt; }
+    h2 { font-size: 20pt; }
+    h3 { font-size: 16pt; }
+    p { margin: 0.5em 0; color: #000; }
+    ul, ol { margin: 0.5em 0; padding-left: 2em; }
+    li { margin: 0.25em 0; }
+    blockquote { border-left: 4px solid #059669; padding-left: 1em; margin: 1em 0; font-style: italic; }
+    a { color: #059669; text-decoration: underline; }
+    img { max-width: 100%; height: auto; margin: 1em 0; }
+    table { width: 100%; border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    strong { font-weight: bold; }
+    em { font-style: italic; }
+  `;
+  container.appendChild(style);
+  
+  document.body.appendChild(container);
+  
+  try {
+    // Capture the content as canvas
+    const canvas = await html2canvas(container, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+    });
+    
+    // Calculate PDF dimensions (A4: 210mm x 297mm)
+    const imgWidth = 210;
+    const pageHeight = 297;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    let heightLeft = imgHeight;
+    
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    let position = 0;
+    
+    // Add image to PDF
+    const imgData = canvas.toDataURL('image/png');
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+    
+    // Add new pages if content is longer than one page
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+    
+    // Save the PDF
+    pdf.save(filename);
+  } catch (error) {
+    console.error('PDF generation failed:', error);
+    alert('Failed to generate PDF. Please try again.');
+  } finally {
+    // Clean up
+    document.body.removeChild(container);
+  }
 };
 
 export const exportToDOCX = async (content: string, filename: string = 'document.docx') => {

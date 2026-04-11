@@ -27,7 +27,7 @@ export function ExportMenu({ content }: ExportMenuProps) {
     setIsOpen(false);
     switch (type) {
       case 'html': exportToHTML(content); break;
-      case 'pdf': exportToPDF(); break;
+      case 'pdf': await exportToPDF(content); break;
       case 'md': exportToMarkdown(content); break;
       case 'docx': await exportToDOCX(content); break;
       case 'txt': exportToPlainText(content); break;
