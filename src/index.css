@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-background: #050505;
+  --color-foreground: #FDFBF7;
+  --color-accent: #059669; /* Desaturated Emerald */
+  --color-accent-hover: #047857;
+  --color-surface: rgba(255, 255, 255, 0.03);
+  --color-surface-hover: rgba(255, 255, 255, 0.06);
+  --color-border: rgba(255, 255, 255, 0.1);
+}
+
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    background-image: radial-gradient(circle at 50% 0%, rgba(5, 150, 105, 0.15), transparent 50%);
+    background-attachment: fixed;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Editor Styles */
+.prose {
+  color: #9ca3af; /* text-gray-400 */
+  line-height: 1.75;
+}
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+  color: #FDFBF7;
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  line-height: 1.2;
+}
+.prose h1 { font-size: 2.25em; }
+.prose h2 { font-size: 1.5em; }
+.prose h3 { font-size: 1.25em; }
+.prose p { margin-top: 1em; margin-bottom: 1em; }
+.prose ul { list-style-type: disc; padding-left: 1.5em; margin-top: 1em; margin-bottom: 1em; }
+.prose ol { list-style-type: decimal; padding-left: 1.5em; margin-top: 1em; margin-bottom: 1em; }
+.prose blockquote {
+  border-left: 4px solid var(--color-accent);
+  padding-left: 1em;
+  font-style: italic;
+  color: #d1d5db;
+}
+.prose a { color: var(--color-accent); text-decoration: underline; }
+.prose img { max-width: 100%; border-radius: 0.5rem; }
+.prose hr { border-color: var(--color-border); margin: 2em 0; }
+.prose table { width: 100%; border-collapse: collapse; margin: 1em 0; }
+.prose th, .prose td { border: 1px solid var(--color-border); padding: 0.5em; }
+
+/* Double Bezel Container */
+.double-bezel {
+  padding: 0.375rem; /* p-1.5 */
+  border-radius: 2rem;
+  border: 1px solid var(--color-border);
+  background: rgba(0, 0, 0, 0.2);
+}
+.double-bezel-inner {
+  background: var(--color-background);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  border-radius: calc(2rem - 0.375rem);
+  overflow: hidden;
+}
+
+/* Glass Pill */
+.glass-pill {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+}
+
+/* Print styles for PDF export */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .prose {
+    color: black;
+  }
+  .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+    color: black;
+  }
+}
