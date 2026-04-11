@@ -5,7 +5,7 @@ import { Toolbar } from './components/Toolbar';
 import { ExportMenu } from './components/ExportMenu';
 import { UploadZone } from './components/UploadZone';
 import { GuideModal } from './components/GuideModal';
-import { FileText, Columns, SquareHalf, Square, Info } from '@phosphor-icons/react';
+import { FileText, Columns, SquareHalf, Square, Info, EyeSlash, Eye } from '@phosphor-icons/react';
 import { cn } from './lib/utils';
 
 type ViewMode = 'editor' | 'preview' | 'split';
@@ -16,6 +16,7 @@ export default function App() {
   const [isMounted, setIsMounted] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
+  const [showToolbar, setShowToolbar] = useState(true);
 
   useEffect(() => {
     setIsMounted(true);
@@ -70,7 +71,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4 w-full md:w-auto">
+        <div className="flex items-center gap-4 w-full md:w-auto relative z-50">
           <button 
             onClick={() => setShowGuide(true)}
             className="p-2 rounded-full text-gray-400 hover:text-white transition-colors hover:bg-white/10"
@@ -78,6 +79,16 @@ export default function App() {
           >
             <Info weight="bold" className="w-6 h-6" />
           </button>
+
+          {(viewMode === 'editor' || viewMode === 'split') && (
+            <button 
+              onClick={() => setShowToolbar(!showToolbar)}
+              className="p-2 rounded-full text-gray-400 hover:text-white transition-colors hover:bg-white/10"
+              title={showToolbar ? "Hide Toolbar" : "Show Toolbar"}
+            >
+              {showToolbar ? <EyeSlash weight="bold" className="w-6 h-6" /> : <Eye weight="bold" className="w-6 h-6" />}
+            </button>
+          )}
 
           <div className="flex items-center p-1 glass-pill mr-auto md:mr-4">
             <button 
@@ -113,7 +124,7 @@ export default function App() {
         "flex-1 flex flex-col no-print transition-all duration-700 delay-150 ease-out",
         isMounted ? "translate-y-0 opacity-100 blur-0" : "translate-y-8 opacity-0 blur-sm"
       )}>
-        {(viewMode === 'editor' || viewMode === 'split') && (
+        {(viewMode === 'editor' || viewMode === 'split') && showToolbar && (
           <Toolbar execCommand={execCommand} />
         )}
 
