@@ -5,6 +5,7 @@ import { Toolbar } from './components/Toolbar';
 import { ExportMenu } from './components/ExportMenu';
 import { UploadZone } from './components/UploadZone';
 import { GuideModal } from './components/GuideModal';
+import { WelcomePopup } from './components/WelcomePopup';
 import { FileText, Columns, SquareHalf, Square, Info, EyeSlash, Eye } from '@phosphor-icons/react';
 import { cn } from './lib/utils';
 
@@ -15,11 +16,19 @@ export default function App() {
   const [viewMode, setViewMode] = useState<ViewMode>('split');
   const [isMounted, setIsMounted] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
   const [showToolbar, setShowToolbar] = useState(true);
 
   useEffect(() => {
     setIsMounted(true);
+    
+    // Check if first time user
+    const hasVisited = localStorage.getItem('ofe_pro_visited');
+    if (!hasVisited) {
+      setShowWelcome(true);
+      localStorage.setItem('ofe_pro_visited', 'true');
+    }
     
     // Load initial state from local storage
     const savedContent = localStorage.getItem('ofe_pro_content');
@@ -153,6 +162,25 @@ export default function App() {
       <div className="hidden print-only">
         <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: content }} />
       </div>
+
+      {/* Footer */}
+      <footer className="mt-8 pt-6 border-t border-white/10 text-center text-sm text-gray-400 no-print">
+        <p className="mb-2">Built by <span className="text-emerald-400 font-medium">Yuvraj Sarathe</span></p>
+        <div className="flex items-center justify-center gap-4">
+          <a href="https://github.com/Mikky-mlh" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">GitHub</a>
+          <span className="text-white/20">•</span>
+          <a href="https://www.linkedin.com/in/yuvraj-sarathe" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">LinkedIn</a>
+          <span className="text-white/20">•</span>
+          <a href="https://mikky-mlh.github.io/Portfolio/" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">Portfolio</a>
+        </div>
+      </footer>
+
+      {showWelcome && (
+        <WelcomePopup 
+          onClose={() => setShowWelcome(false)}
+          onOpenGuide={() => setShowGuide(true)}
+        />
+      )}
 
       {showGuide && (
         <GuideModal 

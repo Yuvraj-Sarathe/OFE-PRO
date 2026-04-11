@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Lightbulb, Keyboard, FileText, Export, Gear } from '@phosphor-icons/react';
+import { X, Lightbulb, Keyboard, FileText, Export, Gear, RocketLaunch, PencilLine, Eye, MagnifyingGlass } from '@phosphor-icons/react';
 import { cn } from '../lib/utils';
 
 interface GuideModalProps {
@@ -32,6 +32,112 @@ export function GuideModal({ onClose, autoSaveEnabled, onToggleAutoSave }: Guide
 
           {/* Content */}
           <div className="p-6 overflow-y-auto space-y-8">
+            
+            <section>
+              <h3 className="flex items-center gap-2 text-lg font-semibold text-white mb-3">
+                <RocketLaunch className="w-5 h-5 text-emerald-500" />
+                Getting Started
+              </h3>
+              <div className="space-y-3 text-gray-400 leading-relaxed">
+                <p>
+                  Welcome to <strong className="text-white">OFE PRO</strong> - your universal text editor! Here's how to get started:
+                </p>
+                <ol className="list-decimal pl-5 space-y-2">
+                  <li><strong className="text-gray-300">Start Typing:</strong> Click in the editor area and begin writing your document.</li>
+                  <li><strong className="text-gray-300">Format Text:</strong> Use the toolbar above the editor to apply bold, italic, headings, lists, and more.</li>
+                  <li><strong className="text-gray-300">Switch Views:</strong> Use the view mode buttons (square icons) in the header to toggle between Editor, Split, or Preview mode.</li>
+                  <li><strong className="text-gray-300">Import Files:</strong> Click "Import File" to load existing documents (.docx, .pdf, .md, .txt, .html).</li>
+                  <li><strong className="text-gray-300">Export:</strong> When done, click "Export" to save in your preferred format.</li>
+                </ol>
+              </div>
+            </section>
+
+            <section>
+              <h3 className="flex items-center gap-2 text-lg font-semibold text-white mb-3">
+                <PencilLine className="w-5 h-5 text-emerald-500" />
+                Toolbar Features
+              </h3>
+              <div className="space-y-3 text-gray-400 leading-relaxed">
+                <p>The toolbar provides comprehensive formatting options:</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+                    <div className="text-white font-medium mb-1">Text Formatting</div>
+                    <div className="text-sm">Bold, Italic, Underline, Strikethrough, Subscript, Superscript, Highlight, Text Color</div>
+                  </div>
+                  <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+                    <div className="text-white font-medium mb-1">Paragraph Styles</div>
+                    <div className="text-sm">Headings (H1-H3), Body text, Header/Footer blocks, Blockquotes</div>
+                  </div>
+                  <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+                    <div className="text-white font-medium mb-1">Lists & Alignment</div>
+                    <div className="text-sm">Bullet lists, Numbered lists, Left/Center/Right align, Indent/Outdent</div>
+                  </div>
+                  <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+                    <div className="text-white font-medium mb-1">Media & Links</div>
+                    <div className="text-sm">Insert links, images (URL or upload), videos (YouTube/Vimeo), tables</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <h3 className="flex items-center gap-2 text-lg font-semibold text-white mb-3">
+                <Eye className="w-5 h-5 text-emerald-500" />
+                View Modes
+              </h3>
+              <div className="space-y-2 text-gray-400">
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-white/5">
+                  <div className="text-2xl">📝</div>
+                  <div>
+                    <div className="text-white font-medium">Editor Only</div>
+                    <div className="text-sm">Focus on writing without distractions. Perfect for drafting content.</div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-white/5">
+                  <div className="text-2xl">⚡</div>
+                  <div>
+                    <div className="text-white font-medium">Split View (Recommended)</div>
+                    <div className="text-sm">See your formatted content in real-time as you type. Best for most users.</div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-white/5">
+                  <div className="text-2xl">👁️</div>
+                  <div>
+                    <div className="text-white font-medium">Preview Only</div>
+                    <div className="text-sm">View the final formatted output. Great for reviewing before export.</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <h3 className="flex items-center gap-2 text-lg font-semibold text-white mb-3">
+                <MagnifyingGlass className="w-5 h-5 text-emerald-500" />
+                Pro Tips
+              </h3>
+              <div className="space-y-2 text-gray-400">
+                <div className="flex items-start gap-2">
+                  <span className="text-emerald-400 mt-1">•</span>
+                  <p><strong className="text-gray-300">Hide Toolbar:</strong> Click the eye icon to hide/show the toolbar for a cleaner workspace.</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-emerald-400 mt-1">•</span>
+                  <p><strong className="text-gray-300">Keyboard Shortcuts:</strong> Use standard shortcuts like Ctrl+B (bold), Ctrl+I (italic), Ctrl+Z (undo).</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-emerald-400 mt-1">•</span>
+                  <p><strong className="text-gray-300">Custom Dialogs:</strong> All popups (link, image, video, table, find/replace) support Enter to submit and Esc to cancel.</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-emerald-400 mt-1">•</span>
+                  <p><strong className="text-gray-300">Video Embeds:</strong> Paste YouTube or Vimeo URLs and they'll automatically convert to embedded players.</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-emerald-400 mt-1">•</span>
+                  <p><strong className="text-gray-300">Local Storage:</strong> Your work is saved locally in your browser. Clear browser data will delete saved content.</p>
+                </div>
+              </div>
+            </section>
             
             <section>
               <h3 className="flex items-center gap-2 text-lg font-semibold text-white mb-3">
