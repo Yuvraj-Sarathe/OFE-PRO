@@ -2,6 +2,10 @@
 
 A powerful, modern rich text editor built with React, TypeScript, and Tailwind CSS. Create, edit, and export documents with a beautiful interface and comprehensive formatting tools.
 
+## Background Story
+
+I created [OFE](https://mikky-mlh.github.io/OFE/) ([GitHub](https://github.com/Mikky-mlh/OFE)) as my submission to ONE FILE HTML CHALLENGE but I later realized that I can make it better without the limitation of using just one file! So I made this NEW AND BETTER VERSION of OFE!!
+
 ## Features
 
 - **Rich Text Editing** - Full contentEditable support with comprehensive formatting toolbar
