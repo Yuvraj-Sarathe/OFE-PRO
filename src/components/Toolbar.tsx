@@ -113,7 +113,7 @@ export function Toolbar({ execCommand }: ToolbarProps) {
     let embedUrl = videoUrl;
     const youtubeMatch = videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
     if (youtubeMatch) {
-      embedUrl = `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+      embedUrl = `https://www.youtube-nocookie.com/embed/${youtubeMatch[1]}`;
     }
     
     const vimeoMatch = videoUrl.match(/vimeo\.com\/(\d+)/);
@@ -121,7 +121,7 @@ export function Toolbar({ execCommand }: ToolbarProps) {
       embedUrl = `https://player.vimeo.com/video/${vimeoMatch[1]}`;
     }
     
-    const html = `<div style="position: relative; padding-bottom: 56.25%; height: 0; margin: 1rem 0;"><iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allowfullscreen></iframe></div><p><br></p>`;
+    const html = `<div style="position: relative; padding-bottom: 56.25%; height: 0; margin: 1rem 0; overflow: hidden;"><iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><p><br></p>`;
     restoreSelection();
     execCommand('insertHTML', html);
   };
