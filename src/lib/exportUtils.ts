@@ -1,8 +1,7 @@
 import { saveAs } from 'file-saver';
 import TurndownService from 'turndown';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel } from 'docx';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 
 export const exportToHTML = (content: string, filename: string = 'document.html') => {
   const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
@@ -24,89 +23,150 @@ export const exportToMarkdown = (content: string, filename: string = 'document.m
   saveAs(blob, filename);
 };
 
-export const exportToPDF = async (content: string, filename: string = 'document.pdf') => {
-  // Create a temporary container for rendering
-  const container = document.createElement('div');
-  container.style.position = 'absolute';
-  container.style.left = '-9999px';
-  container.style.top = '0';
-  container.style.width = '210mm'; // A4 width
-  container.style.padding = '20mm';
-  container.style.backgroundColor = '#ffffff';
-  container.style.color = '#000000';
-  container.style.fontFamily = 'Arial, sans-serif';
-  container.style.fontSize = '12pt';
-  container.style.lineHeight = '1.6';
-  
-  // Apply content with proper styling
-  container.innerHTML = `
-    <div style="max-width: 100%; word-wrap: break-word;">
-      ${content}
-    </div>
-  `;
-  
-  // Apply styles to make it look good in PDF
-  const style = document.createElement('style');
-  style.textContent = `
-    h1, h2, h3, h4, h5, h6 { color: #000; margin-top: 1em; margin-bottom: 0.5em; font-weight: bold; }
-    h1 { font-size: 24pt; }
-    h2 { font-size: 20pt; }
-    h3 { font-size: 16pt; }
-    p { margin: 0.5em 0; color: #000; }
-    ul, ol { margin: 0.5em 0; padding-left: 2em; }
-    li { margin: 0.25em 0; }
-    blockquote { border-left: 4px solid #059669; padding-left: 1em; margin: 1em 0; font-style: italic; }
-    a { color: #059669; text-decoration: underline; }
-    img { max-width: 100%; height: auto; margin: 1em 0; }
-    table { width: 100%; border-collapse: collapse; margin: 1em 0; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    strong { font-weight: bold; }
-    em { font-style: italic; }
-  `;
-  container.appendChild(style);
-  
-  document.body.appendChild(container);
-  
-  try {
-    // Capture the content as canvas
-    const canvas = await html2canvas(container, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff',
-      logging: false,
-    });
-    
-    // Calculate PDF dimensions (A4: 210mm x 297mm)
-    const imgWidth = 210;
-    const pageHeight = 297;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    let heightLeft = imgHeight;
-    
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    let position = 0;
-    
-    // Add image to PDF
-    const imgData = canvas.toDataURL('image/png');
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-    
-    // Add new pages if content is longer than one page
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+export const exportToPDF = (content: string, filename: string = 'document.pdf') => {
+  const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  const ML = 20, MR = 20, MT = 20, MB = 25;
+  const PW = 210, PH = 297;
+  const TW = PW - ML - MR; // usable text width: 170mm
+
+  let y = MT;
+
+  const newPage = () => { pdf.addPage(); y = MT; };
+  const lh = (size: number) => size * 0.352778 * 1.55; // pt → mm with line spacing
+  const gap = (mm: number) => { y += mm; };
+
+  const writeLines = (text: string, size: number, style: string, indent = 0) => {
+    if (!text.trim()) return;
+    pdf.setFontSize(size);
+    pdf.setFont('helvetica', style);
+    const lineH = lh(size);
+    const lines: string[] = pdf.splitTextToSize(text, TW - indent);
+    for (const line of lines) {
+      if (y + lineH > PH - MB) newPage();
+      pdf.text(line, ML + indent, y);
+      y += lineH;
     }
-    
-    // Save the PDF
-    pdf.save(filename);
-  } catch (error) {
-    console.error('PDF generation failed:', error);
-    alert('Failed to generate PDF. Please try again.');
-  } finally {
-    // Clean up
-    document.body.removeChild(container);
-  }
+  };
+
+  const dom = new DOMParser().parseFromString(content, 'text/html');
+
+  const walk = (node: Element) => {
+    const tag = node.tagName?.toLowerCase();
+    const txt = (node.textContent || '').trim();
+
+    switch (tag) {
+      case 'h1': gap(4); writeLines(txt, 22, 'bold'); gap(3); break;
+      case 'h2': gap(3); writeLines(txt, 16, 'bold'); gap(2); break;
+      case 'h3': gap(2); writeLines(txt, 13, 'bold'); gap(2); break;
+      case 'h4': gap(1); writeLines(txt, 11, 'bold'); gap(1); break;
+      case 'h5': case 'h6': writeLines(txt, 10, 'bold'); gap(1); break;
+
+      case 'p':
+        if (txt) { writeLines(txt, 11, 'normal'); gap(2); }
+        break;
+
+      case 'blockquote': {
+        const lineH = lh(11);
+        const lines: string[] = pdf.splitTextToSize(txt, TW - 7);
+        const blockH = lines.length * lineH + 2;
+        if (y + blockH > PH - MB) newPage();
+        // draw emerald left border
+        pdf.setDrawColor(5, 150, 105);
+        pdf.setLineWidth(1);
+        pdf.line(ML, y - lineH + 2, ML, y - lineH + 2 + blockH);
+        pdf.setFontSize(11);
+        pdf.setFont('helvetica', 'italic');
+        for (const line of lines) {
+          if (y + lineH > PH - MB) newPage();
+          pdf.text(line, ML + 5, y);
+          y += lineH;
+        }
+        gap(3);
+        break;
+      }
+
+      case 'ul': case 'ol': {
+        const items = Array.from(node.children).filter(
+          c => c.tagName?.toLowerCase() === 'li'
+        );
+        items.forEach((li, i) => {
+          const bullet = tag === 'ol' ? `${i + 1}.` : '•';
+          const liTxt = (li.textContent || '').trim();
+          const lineH = lh(11);
+          pdf.setFontSize(11);
+          pdf.setFont('helvetica', 'normal');
+          const lines: string[] = pdf.splitTextToSize(liTxt, TW - 9);
+          lines.forEach((line, j) => {
+            if (y + lineH > PH - MB) newPage();
+            if (j === 0) pdf.text(bullet, ML + 2, y);
+            pdf.text(line, ML + 8, y);
+            y += lineH;
+          });
+        });
+        gap(2);
+        break;
+      }
+
+      case 'hr': {
+        gap(2);
+        if (y > PH - MB) newPage();
+        pdf.setDrawColor(200, 200, 200);
+        pdf.setLineWidth(0.3);
+        pdf.line(ML, y, PW - MR, y);
+        gap(3);
+        break;
+      }
+
+      case 'table': {
+        const rows = Array.from(node.querySelectorAll('tr'));
+        const colCount = Math.max(...rows.map(r => r.querySelectorAll('th, td').length));
+        const cw = TW / colCount;
+        const rh = 7;
+        for (const row of rows) {
+          const cells = Array.from(row.querySelectorAll('th, td'));
+          if (y + rh > PH - MB) newPage();
+          const isHeader = cells[0]?.tagName.toLowerCase() === 'th';
+          pdf.setFont('helvetica', isHeader ? 'bold' : 'normal');
+          pdf.setFontSize(9);
+          if (isHeader) {
+            pdf.setFillColor(240, 240, 240);
+            pdf.rect(ML, y - 5, TW, rh, 'F');
+          }
+          cells.forEach((cell, ci) => {
+            const cx = ML + ci * cw;
+            pdf.setDrawColor(180, 180, 180);
+            pdf.setLineWidth(0.2);
+            pdf.rect(cx, y - 5, cw, rh);
+            const ct = pdf.splitTextToSize((cell.textContent || '').trim(), cw - 3)[0] ?? '';
+            pdf.text(ct, cx + 2, y);
+          });
+          y += rh;
+        }
+        gap(3);
+        break;
+      }
+
+      default: {
+        // div, section, header, footer, article etc — recurse into children
+        const blockTags = new Set(['p','h1','h2','h3','h4','h5','h6',
+          'ul','ol','blockquote','table','hr','div','section','article','header','footer','main']);
+        const hasBlockKids = Array.from(node.children)
+          .some(c => blockTags.has(c.tagName?.toLowerCase()));
+
+        if (hasBlockKids) {
+          Array.from(node.children).forEach(c => walk(c as Element));
+        } else if (txt) {
+          writeLines(txt, 11, 'normal');
+          gap(2);
+        }
+        break;
+      }
+    }
+  };
+
+  Array.from(dom.body.children).forEach(c => walk(c as Element));
+  pdf.save(filename);
 };
 
 export const exportToDOCX = async (content: string, filename: string = 'document.docx') => {

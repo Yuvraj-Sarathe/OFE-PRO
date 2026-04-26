@@ -1,12 +1,12 @@
 # OFE PRO - Universal Text Editor
 
-🚀 **[Live Demo](https://ofe-pro.vercel.app)** | 📝 [Original OFE](https://mikky-mlh.github.io/OFE/)
+🚀 **[Live Demo](https://ofe-pro.vercel.app)** | 📝 [Original OFE](https://Yuvraj-Sarathe.github.io/OFE/)
 
 A powerful, modern rich text editor built with React, TypeScript, and Tailwind CSS. Create, edit, and export documents with a beautiful interface and comprehensive formatting tools.
 
 ## Background Story
 
-I created [OFE](https://mikky-mlh.github.io/OFE/) ([GitHub](https://github.com/Mikky-mlh/OFE)) as my submission to ONE FILE HTML CHALLENGE but I later realized that I can make it better without the limitation of using just one file! So I made this NEW AND BETTER VERSION of OFE!!
+I created [OFE](https://Yuvraj-Sarathe.github.io/OFE/) ([GitHub](https://github.com/Yuvraj-Sarathe/OFE)) as my submission to ONE FILE HTML CHALLENGE but I later realized that I can make it better without the limitation of using just one file! So I made this NEW AND BETTER VERSION of OFE!!
 
 ## Features
 
@@ -47,9 +47,9 @@ npm run build
 
 **Yuvraj Sarathe**
 
-- GitHub: [@Mikky-mlh](https://github.com/Mikky-mlh)
+- GitHub: [@Yuvraj-Sarathe](https://github.com/Yuvraj-Sarathe)
 - LinkedIn: [Yuvraj Sarathe](https://www.linkedin.com/in/yuvraj-sarathe)
-- Portfolio: [mikky-mlh.github.io/Portfolio](https://mikky-mlh.github.io/Portfolio/)
+- Portfolio: [Yuvraj-Sarathe.github.io/Portfolio](https://Yuvraj-Sarathe.github.io/Portfolio/)
 
 ## License
 
